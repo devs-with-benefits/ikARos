@@ -21,15 +21,15 @@ const opacityRemap = mat => {
 };
 
 k = 0;
+let HALFX = 2;
 function placePyrmaid(HALF, SPREAD, scene) {
-  console.log(k);
   var radius = 0.1*(k+1);
   var height = 0.2*(k+1);
   var geometry = new THREE.CylinderGeometry(0, radius, height, 4, 1);
   geometry.rotateZ(Math.PI);
   var material = new THREE.MeshNormalMaterial();
   var pyramid = new THREE.Mesh(geometry, material);
-  pyramid.position.set(2 - HALF, 2 - HALF, -2+k);
+  pyramid.position.set(2 - HALFX, 2 - HALF, -2+k);
   pyramid.position.multiplyScalar(SPREAD);
   scene.add(pyramid);
   if(k > 0) {
@@ -37,7 +37,26 @@ function placePyrmaid(HALF, SPREAD, scene) {
       scene.remove(scene.children[0]);
     }
   }
-  k++;
+  k += 0.05;
+  HALFX += 0.05
+}
+
+function cb(err) {
+  console.log(err);
+}
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, cb, {
+      enableHighAccuracy: true
+    });
+  }
+
+}
+
+var pos = null;
+function showPosition(position) {
+  pos = position;
 }
 /**
  * The Reticle class creates an object that repeatedly calls
@@ -199,9 +218,13 @@ window.DemoUtils = {
       //for (let j = 0; j < ROW_COUNT; j++) {
     //for (let k = 0; k < ROW_COUNT; k++) {
     setInterval(function () {
-      placePyrmaid(HALF, SPREAD, scene);
-      console.log(k);
-      }, 2000);
+      if (k < 40) {
+        getLocation()
+        console.log(pos.coords);
+        placePyrmaid(HALF, SPREAD, scene);
+        //console.log(k);
+      }
+    }, 500);
     //}
       //}
     //}
