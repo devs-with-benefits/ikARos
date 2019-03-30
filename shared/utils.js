@@ -20,6 +20,25 @@ const opacityRemap = mat => {
   }
 };
 
+k = 0;
+function placePyrmaid(HALF, SPREAD, scene) {
+  console.log(k);
+  var radius = 0.1*(k+1);
+  var height = 0.2*(k+1);
+  var geometry = new THREE.CylinderGeometry(0, radius, height, 4, 1);
+  geometry.rotateZ(Math.PI);
+  var material = new THREE.MeshNormalMaterial();
+  var pyramid = new THREE.Mesh(geometry, material);
+  pyramid.position.set(2 - HALF, 2 - HALF, -2+k);
+  pyramid.position.multiplyScalar(SPREAD);
+  scene.add(pyramid);
+  if(k > 0) {
+    while(scene.children.length > 1){
+      scene.remove(scene.children[0]);
+    }
+  }
+  k++;
+}
 /**
  * The Reticle class creates an object that repeatedly calls
  * `xrSession.requestHitTest()` to render a ring along a found
@@ -100,6 +119,10 @@ class Reticle extends THREE.Object3D {
   }
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 window.DemoUtils = {
   /**
    * Creates a THREE.Scene containing lights that case shadows,
@@ -152,19 +175,11 @@ window.DemoUtils = {
    *
    * @return {THREE.Scene}
    */
-  createCubeScene() {
+
+  createPyramidScene() {
     const scene = new THREE.Scene();
 
-    const materials = [
-      new THREE.MeshBasicMaterial({ color: 0xff0000 }),
-      new THREE.MeshBasicMaterial({ color: 0x0000ff }),
-      new THREE.MeshBasicMaterial({ color: 0x00ff00 }),
-      new THREE.MeshBasicMaterial({ color: 0xff00ff }),
-      new THREE.MeshBasicMaterial({ color: 0x00ffff }),
-      new THREE.MeshBasicMaterial({ color: 0xffff00 })
-    ];
-    var radius = 0.1;
-    var height = 0.2;
+
     //
     const ROW_COUNT = 4;
     const SPREAD = 1;
@@ -180,21 +195,16 @@ window.DemoUtils = {
     //   }
     // }\
     ////////////////////////////////////////
-    for (let i = 0; i < ROW_COUNT; i++) {
-      for (let j = 0; j < ROW_COUNT; j++) {
-        for (let k = 0; k < ROW_COUNT; k++) {
-          var geometry = new THREE.CylinderGeometry(0, radius, height, 4, 1);
-          geometry.rotateZ(Math.PI);
-          var material = new THREE.MeshNormalMaterial();
-          var pyramid = new THREE.Mesh(geometry, material);
-          pyramid.position.set(i - HALF, j - HALF, -2);
-          pyramid.position.multiplyScalar(SPREAD);
-          scene.add(pyramid);
-        }
-      }
-    }
-
-    console.log(scene);
+    //for (let i = 0; i < ROW_COUNT; i++) {
+      //for (let j = 0; j < ROW_COUNT; j++) {
+    //for (let k = 0; k < ROW_COUNT; k++) {
+    setInterval(function () {
+      placePyrmaid(HALF, SPREAD, scene);
+      console.log(k);
+      }, 2000);
+    //}
+      //}
+    //}
     return scene;
   },
 

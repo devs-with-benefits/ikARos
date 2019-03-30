@@ -134,7 +134,7 @@ class App {
     // render scene.
     // Call our utility which gives us a THREE.Scene populated with
     // cubes everywhere.
-    this.scene = DemoUtils.createCubeScene();
+    this.scene = DemoUtils.createPyramidScene();
 
     // We'll update the camera matrices directly from API, so
     // disable matrix auto updates so three.js doesn't attempt
